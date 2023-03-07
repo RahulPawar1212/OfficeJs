@@ -1,0 +1,17 @@
+.vscode/
+node_modules/
+.nyc_output/
+coverage
+/**/.pyc
+*.pyc
+/**/DS_key.json
+/**/status_file
+/**/*.pem
+/**/gcp_service_user_key.json
+/**/*user-key.json
+/**/data-science-202909*.json
+/**/*.feather
+/Processing/MediaSpendProcessing/Auth
+/Processing/MediaSpendProcessing/TestData
+.idea/
+auth.json
