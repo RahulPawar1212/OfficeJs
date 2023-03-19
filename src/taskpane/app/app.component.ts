@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Output } from "@angular/core";
+import { wendydata } from 'interfaces';
+import { map } from 'rxjs';
 
 /* global console, Excel */
 var testupdate = "";
@@ -8,11 +10,37 @@ var testupdate = "";
 })
 
 export default class AppComponent {
-  welcomeMessage = "Welcomesss";
-  colortxt = "green";
-  testarray = ["aa","bb","cc","dd"];
-  testarray2;
-  testarray3:any = [];
+  itle = 'xml_handler';
+  testarray:string[] = ["aa","bb","cc","dd"];
+  //map = new Map();
+
+  questioner = [
+    { 
+      "id": "1",
+      "qid": "Q1",
+      "type": "",
+      "title": "",
+      "question": "",
+      "instructionForRespondent": "",
+      "answersRowOptions": [1,2,3,4],
+      "scaleColumnOptions": [],
+      "frageomrade": "",
+      "CommentsForProgrammer": [],
+    },
+    { 
+      "id": "2",
+      "qid": "Q2",
+      "type": "",
+      "title": "",
+      "question": "",
+      "instructionForRespondent": "",
+      "answersRowOptions": [],
+      "scaleColumnOptions": [],
+      "frageomrade": "",
+      "CommentsForProgrammer": [],
+    }
+  ];
+  
   @Output() reviewSubmitted = new EventEmitter<string>();
 
   async run() {
@@ -28,7 +56,6 @@ export default class AppComponent {
 
         // Update the fill color
         range.format.fill.color = "yellow";
-        this.welcomeMessage = "heloow";
 
         await context.sync();
         console.log(`The range address was ${range.address}.`);
@@ -38,58 +65,42 @@ export default class AppComponent {
     }
   };
 
- 
+  selectedCountry: String = "--Choose Country--";
 
-  async  registerClickHandler() {
-    await Excel.run(async (context) => {
-      const sheet = context.workbook.worksheets.getActiveWorksheet();
-      
-      const range1 = sheet.getRange("G4:K4")
-      range1.load("values");
-      await context.sync()
-      
-      //console.log(range1)
-      //console.log(JSON.stringify(range1.values, null, 4));
-      // var markets =   JSON.stringify(option2[i]).slice(1,-1).toString().replaceAll(/},{/g,',')
+expression:string = "";
+    
+newData:wendydata[] = JSON.parse(JSON.stringify(this.questioner))
 
-      sheet.onSingleClicked.add((event) => {
-        return Excel.run((context) => {
-          console.log(
-            `Click detected at ${event.address} (pixel offset from upper-left cell corner: ${event.offsetX}, ${event.offsetY})`
-          );
 
-          this.testarray2 = JSON.stringify(range1.values, null, 4);
-          this.testarray2 =  this.testarray2.slice(1,-1)
-          this.testarray3 = eval(this.testarray2)
-      
-          console.log(this.testarray3)
+updateExp(qid:any,answr:any) {
+  this.expression = "Expression : " + "f('" + qid + "')=='" + answr+"'"  
+}
 
-         
+questionid:string = "";
 
-          this.onchange (`${event.address}`);
-          this.colortxt = "red";  
-            Promise.resolve(this.onchange (`${event.address}`)).then(v=>
-            {
-              this.welcomeMessage = v;
-            })
-          
-          //this.reviewSubmitted.emit(this.welcomeMessage);
-          
-          console.log(this.welcomeMessage);
-          return context.sync();
-        });
-      });
-  
-      console.log("The worksheet click handler is registered.");
-  
-      await context.sync();
-    });
-  }
-
-   onchange(texts: string) {
-    this.welcomeMessage = texts
-    document.getElementById("p1").innerHTML = texts
-    return texts
-  }
+answers:any = []
+changeQid(qid: any) { //Angular 11
+  this.questionid = qid.target.value;
+  //this.states = this.Countries.find(cntry => cntry.name == country).states; //Angular 8
+  this.answers = this.newData.find((ans: any) => ans.qid == qid.target.value)?.answersRowOptions; //Angular 11
+  this.updateExp(qid.target.value,"")
+  console.log(this.answers)
   
 }
+
+changeAnswer(answers:any) { //Angular 11
+  //this.states = this.Countries.find(cntry => cntry.name == country).states; //Angular 8
+  //this.answers = this.newData.find((ans: any) => ans.qid == qid.target.value)?.answersRowOptions; //Angular 11
+  this.updateExp(this.questionid,answers.target.value)
+  console.log(answers.target.value)
+  
+}
+
+
+  async registerClickHandler() {
+    await Excel.run(async (context) => {
+
+
+    })
+
+  }}
